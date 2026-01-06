@@ -243,6 +243,14 @@ export interface GitHubAPI {
   mergePR: (projectId: string, prNumber: number, mergeMethod?: 'merge' | 'squash' | 'rebase') => Promise<boolean>;
   assignPR: (projectId: string, prNumber: number, username: string) => Promise<boolean>;
   getPRReview: (projectId: string, prNumber: number) => Promise<PRReviewResult | null>;
+  createPR: (
+    projectId: string,
+    options: { title: string; body: string; head: string; base: string }
+  ) => Promise<IPCResult<{ number: number; url: string }>>;
+  generatePRContent: (
+    projectId: string,
+    options: { sourceBranch: string; targetBranch: string }
+  ) => Promise<IPCResult<{ title: string; description: string }>>;
 
   // Follow-up review operations
   checkNewCommits: (projectId: string, prNumber: number) => Promise<NewCommitsCheck>;
@@ -611,6 +619,18 @@ export const createGitHubAPI = (): GitHubAPI => ({
 
   getPRReview: (projectId: string, prNumber: number): Promise<PRReviewResult | null> =>
     invokeIpc(IPC_CHANNELS.GITHUB_PR_GET_REVIEW, projectId, prNumber),
+
+  createPR: (
+    projectId: string,
+    options: { title: string; body: string; head: string; base: string }
+  ): Promise<IPCResult<{ number: number; url: string }>> =>
+    invokeIpc(IPC_CHANNELS.GITHUB_PR_CREATE, projectId, options),
+
+  generatePRContent: (
+    projectId: string,
+    options: { sourceBranch: string; targetBranch: string }
+  ): Promise<IPCResult<{ title: string; description: string }>> =>
+    invokeIpc(IPC_CHANNELS.GITHUB_PR_GENERATE_CONTENT, projectId, options),
 
   // Follow-up review operations
   checkNewCommits: (projectId: string, prNumber: number): Promise<NewCommitsCheck> =>
