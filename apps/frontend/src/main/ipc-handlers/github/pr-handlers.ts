@@ -1571,5 +1571,74 @@ export function registerPRHandlers(
     }
   );
 
+  // Create a new PR
+  ipcMain.handle(
+    IPC_CHANNELS.GITHUB_PR_CREATE,
+    async (_, projectId: string, params: { title: string; body: string; sourceBranch: string; targetBranch: string }): Promise<PRData | null> => {
+      debugLog('createPR handler called', { projectId, sourceBranch: params.sourceBranch, targetBranch: params.targetBranch });
+      return withProjectOrNull(projectId, async (project) => {
+        const config = getGitHubConfig(project);
+        if (!config) {
+          debugLog('No GitHub config found for project');
+          return null;
+        }
+
+        try {
+          const pr = await githubFetch(
+            config.token,
+            `/repos/${config.repo}/pulls`,
+            {
+              method: 'POST',
+              body: JSON.stringify({
+                title: params.title,
+                body: params.body,
+                head: params.sourceBranch,
+                base: params.targetBranch,
+              }),
+            }
+          ) as {
+            number: number;
+            title: string;
+            body?: string;
+            state: string;
+            user: { login: string };
+            head: { ref: string };
+            base: { ref: string };
+            additions: number;
+            deletions: number;
+            changed_files: number;
+            assignees?: Array<{ login: string }>;
+            created_at: string;
+            updated_at: string;
+            html_url: string;
+          };
+
+          debugLog('PR created successfully', { prNumber: pr.number });
+
+          return {
+            number: pr.number,
+            title: pr.title,
+            body: pr.body ?? '',
+            state: pr.state,
+            author: { login: pr.user.login },
+            headRefName: pr.head.ref,
+            baseRefName: pr.base.ref,
+            additions: pr.additions,
+            deletions: pr.deletions,
+            changedFiles: pr.changed_files,
+            assignees: pr.assignees?.map((a: { login: string }) => ({ login: a.login })) ?? [],
+            files: [],
+            createdAt: pr.created_at,
+            updatedAt: pr.updated_at,
+            htmlUrl: pr.html_url,
+          };
+        } catch (error) {
+          debugLog('Failed to create PR', { error: error instanceof Error ? error.message : error });
+          throw error;
+        }
+      });
+    }
+  );
+
   debugLog('PR handlers registered');
 }
