@@ -229,6 +229,24 @@
     "followup": "Suivi",
     "initial": "Initial"
   },
+  "prCreate": {
+    "title": "Créer une Pull Request",
+    "description": "Créer une nouvelle pull request à partir des modifications de votre branche",
+    "sourceBranch": "Branche source",
+    "targetBranch": "Branche cible",
+    "prTitle": "Titre",
+    "prTitlePlaceholder": "Ajoutez un titre descriptif pour votre PR",
+    "prDescription": "Description",
+    "prDescriptionPlaceholder": "Décrivez les modifications de cette pull request...",
+    "generateWithAI": "Générer avec l'IA",
+    "generating": "Génération en cours...",
+    "createPR": "Créer la Pull Request",
+    "creating": "Création en cours...",
+    "branchesRequired": "Les branches source et cible sont requises",
+    "fieldsRequired": "Le titre et les branches sont requis",
+    "generateError": "Échec de la génération du contenu de la PR",
+    "createError": "Échec de la création de la pull request"
+  },
   "downloads": {
     "toggleExpand": "Afficher/masquer les détails",
     "downloading": "Téléchargement de {{count}} modèle",
