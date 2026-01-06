@@ -12,7 +12,7 @@ export function EmptyState({ searchQuery, icon: Icon = Github, message }: EmptyS
         <Icon className="h-6 w-6 text-muted-foreground" />
       </div>
       <p className="text-sm text-muted-foreground">
-        {searchQuery ? 'No issues match your search' : message}
+        {searchQuery ? t('empty.noMatch') : message}
       </p>
     </div>
   );
@@ -27,15 +27,15 @@ export function NotConnectedState({ error, onOpenSettings }: NotConnectedStatePr
         <Github className="h-8 w-8 text-muted-foreground" />
       </div>
       <h3 className="text-lg font-semibold text-foreground mb-2">
-        GitHub Not Connected
+        {t('notConnected.title')}
       </h3>
       <p className="text-sm text-muted-foreground mb-4 max-w-md">
-        {error || 'Configure your GitHub token and repository in project settings to sync issues.'}
+        {error || t('notConnected.description')}
       </p>
       {onOpenSettings && (
         <Button onClick={onOpenSettings} variant="outline">
           <Settings2 className="h-4 w-4 mr-2" />
-          Open Settings
+          {t('notConnected.openSettings')}
         </Button>
       )}
     </div>
