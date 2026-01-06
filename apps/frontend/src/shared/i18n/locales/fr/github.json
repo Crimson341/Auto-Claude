@@ -1,0 +1,60 @@
+{
+  "title": "Tickets GitHub",
+  "states": {
+    "opened": "Ouvert",
+    "closed": "Fermé"
+  },
+  "header": {
+    "open": "ouvert",
+    "searchPlaceholder": "Rechercher des tickets..."
+  },
+  "filters": {
+    "opened": "Ouvert",
+    "closed": "Fermé",
+    "all": "Tous"
+  },
+  "empty": {
+    "noMatch": "Aucun ticket ne correspond à votre recherche",
+    "selectIssue": "Sélectionnez un ticket pour voir les détails"
+  },
+  "notConnected": {
+    "title": "GitHub non connecté",
+    "description": "Configurez votre token GitHub et le dépôt dans les paramètres du projet pour synchroniser les tickets.",
+    "openSettings": "Ouvrir les paramètres"
+  },
+  "detail": {
+    "viewTask": "Voir la tâche",
+    "createTask": "Créer une tâche",
+    "taskLinked": "Tâche liée",
+    "taskId": "ID de tâche",
+    "description": "Description",
+    "noDescription": "Aucune description fournie.",
+    "assignees": "Assignés",
+    "milestone": "Jalon",
+    "comments": "commentaires"
+  },
+  "settings": {
+    "enableIssues": "Activer les tickets GitHub",
+    "enableIssuesDescription": "Synchroniser les tickets depuis GitHub et créer des tâches automatiquement",
+    "authentication": "Authentification GitHub",
+    "personalAccessToken": "Jeton d'accès personnel",
+    "tokenScope": "Créez un jeton avec",
+    "scopeRepo": "repo",
+    "scopeFrom": "portée depuis",
+    "githubSettings": "Paramètres GitHub",
+    "repository": "Dépôt",
+    "repositoryFormat": "Format :",
+    "repositoryFormatExample": "(ex. propriétaire/dépôt)",
+    "connectionStatus": "État de connexion",
+    "checking": "Vérification...",
+    "connectedTo": "Connecté à",
+    "notConnected": "Non connecté",
+    "issuesAvailable": "Tickets disponibles",
+    "issuesAvailableDescription": "Accédez aux tickets GitHub depuis la barre latérale pour voir, investiguer et créer des tâches à partir des tickets.",
+    "defaultBranch": "Branche par défaut",
+    "defaultBranchDescription": "Branche de base pour créer les worktrees de tâches",
+    "autoDetect": "Détection auto (main/master)",
+    "autoSyncOnLoad": "Synchro auto au chargement",
+    "autoSyncDescription": "Récupérer automatiquement les tickets au chargement du projet"
+  }
+}
