@@ -27,6 +27,7 @@ import {
   validateGitHubModule,
   buildRunnerArgs,
 } from './utils/subprocess-runner';
+import { getToolPath } from '../../../cli-tool-manager';
 
 /**
  * Sanitize network data before writing to file
@@ -1635,6 +1636,134 @@ export function registerPRHandlers(
         } catch (error) {
           debugLog('Failed to create PR', { error: error instanceof Error ? error.message : error });
           throw error;
+        }
+      });
+    }
+  );
+
+  // Generate PR content using AI
+  ipcMain.handle(
+    IPC_CHANNELS.GITHUB_PR_GENERATE_CONTENT,
+    async (_, projectId: string, sourceBranch: string, targetBranch: string): Promise<{ title: string; body: string } | null> => {
+      debugLog('generatePRContent handler called', { projectId, sourceBranch, targetBranch });
+      return withProjectOrNull(projectId, async (project) => {
+        try {
+          const { execFileSync } = await import('child_process');
+          const git = getToolPath('git');
+          const claude = getToolPath('claude');
+
+          // Validate branch names to prevent command injection
+          const branchPattern = /^[a-zA-Z0-9_\-./]+$/;
+          if (!branchPattern.test(sourceBranch) || !branchPattern.test(targetBranch)) {
+            throw new Error('Invalid branch name');
+          }
+
+          // Get diff between branches
+          let diff: string;
+          try {
+            diff = execFileSync(git, ['diff', `${targetBranch}...${sourceBranch}`], {
+              cwd: project.path,
+              encoding: 'utf-8',
+              maxBuffer: 10 * 1024 * 1024, // 10MB buffer for large diffs
+              env: getAugmentedEnv(),
+            });
+          } catch {
+            // If diff fails (e.g., branches don't share history), try simpler diff
+            diff = execFileSync(git, ['diff', targetBranch, sourceBranch], {
+              cwd: project.path,
+              encoding: 'utf-8',
+              maxBuffer: 10 * 1024 * 1024,
+              env: getAugmentedEnv(),
+            });
+          }
+
+          // Get commit messages between branches
+          let commits: string;
+          try {
+            commits = execFileSync(git, ['log', `${targetBranch}..${sourceBranch}`, '--oneline', '--no-decorate'], {
+              cwd: project.path,
+              encoding: 'utf-8',
+              env: getAugmentedEnv(),
+            });
+          } catch {
+            commits = '';
+          }
+
+          // Truncate diff if too large (Claude has context limits)
+          const maxDiffLength = 50000;
+          const truncatedDiff = diff.length > maxDiffLength
+            ? diff.substring(0, maxDiffLength) + '\n\n... (diff truncated due to size)'
+            : diff;
+
+          // Build prompt for Claude
+          const prompt = `You are generating content for a GitHub Pull Request. Based on the following git diff and commit history, generate a concise PR title and a descriptive body.
+
+## Commits
+${commits || '(No commits found)'}
+
+## Diff
+\`\`\`diff
+${truncatedDiff || '(No changes found)'}
+\`\`\`
+
+Generate a JSON response with exactly this format (no markdown code blocks, just raw JSON):
+{
+  "title": "A concise, descriptive PR title (max 72 chars)",
+  "body": "A markdown-formatted PR description including:\\n- Summary of changes\\n- Key modifications\\n- Any notable implementation details"
+}
+
+Respond ONLY with the JSON object, no additional text.`;
+
+          debugLog('Calling Claude CLI to generate PR content');
+
+          // Call Claude CLI in print mode
+          const output = execFileSync(claude, ['--print', prompt], {
+            cwd: project.path,
+            encoding: 'utf-8',
+            timeout: 60000, // 60 second timeout
+            maxBuffer: 1024 * 1024, // 1MB buffer
+            env: getAugmentedEnv(),
+          });
+
+          // Parse the JSON response
+          const trimmedOutput = output.trim();
+
+          // Try to extract JSON from the response (in case Claude adds extra text)
+          let jsonStr = trimmedOutput;
+          const jsonMatch = trimmedOutput.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            jsonStr = jsonMatch[0];
+          }
+
+          try {
+            const result = JSON.parse(jsonStr);
+
+            if (!result.title || !result.body) {
+              throw new Error('Invalid response format: missing title or body');
+            }
+
+            debugLog('Successfully generated PR content', { titleLength: result.title.length });
+            return {
+              title: String(result.title).substring(0, 256), // Limit title length
+              body: String(result.body),
+            };
+          } catch (parseError) {
+            debugLog('Failed to parse Claude response as JSON', {
+              error: parseError instanceof Error ? parseError.message : parseError,
+              output: trimmedOutput.substring(0, 500),
+            });
+
+            // Fallback: use the output as description with a generic title
+            return {
+              title: `Changes from ${sourceBranch}`,
+              body: trimmedOutput,
+            };
+          }
+        } catch (error) {
+          debugLog('Failed to generate PR content', {
+            error: error instanceof Error ? error.message : error,
+          });
+          return null;
         }
       });
     }
