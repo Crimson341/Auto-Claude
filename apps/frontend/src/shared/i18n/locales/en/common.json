@@ -229,6 +229,24 @@
     "followup": "Follow-up",
     "initial": "Initial"
   },
+  "prCreate": {
+    "title": "Create Pull Request",
+    "description": "Create a new pull request from your branch changes",
+    "sourceBranch": "Source Branch",
+    "targetBranch": "Target Branch",
+    "prTitle": "Title",
+    "prTitlePlaceholder": "Add a descriptive title for your PR",
+    "prDescription": "Description",
+    "prDescriptionPlaceholder": "Describe the changes in this pull request...",
+    "generateWithAI": "Generate with AI",
+    "generating": "Generating...",
+    "createPR": "Create Pull Request",
+    "creating": "Creating...",
+    "branchesRequired": "Source and target branches are required",
+    "fieldsRequired": "Title and branches are required",
+    "generateError": "Failed to generate PR content",
+    "createError": "Failed to create pull request"
+  },
   "downloads": {
     "toggleExpand": "Toggle download details",
     "downloading": "Downloading {{count}} model",
