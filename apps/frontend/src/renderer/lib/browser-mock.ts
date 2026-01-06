@@ -170,7 +170,9 @@ const browserMockAPI: ElectronAPI = {
     approveBatches: async () => ({ success: true, batches: [] }),
     onAnalyzePreviewProgress: () => () => {},
     onAnalyzePreviewComplete: () => () => {},
-    onAnalyzePreviewError: () => () => {}
+    onAnalyzePreviewError: () => () => {},
+    createPR: async () => ({ success: true, data: { number: 1, url: '' } }),
+    generatePRContent: async () => ({ success: true, data: { title: '', description: '' } })
   },
 
   // Claude Code Operations

@@ -27,7 +27,7 @@ import {
   validateGitHubModule,
   buildRunnerArgs,
 } from './utils/subprocess-runner';
-import { getToolPath } from '../../../cli-tool-manager';
+import { getToolPath } from '../../cli-tool-manager';
 
 /**
  * Sanitize network data before writing to file
