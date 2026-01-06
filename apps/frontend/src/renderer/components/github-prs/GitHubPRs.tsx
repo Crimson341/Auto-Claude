@@ -1,9 +1,9 @@
-import { useCallback } from 'react';
-import { GitPullRequest, RefreshCw, ExternalLink, Settings } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { GitPullRequest, RefreshCw, ExternalLink, Settings, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useProjectStore } from '../../stores/project-store';
 import { useGitHubPRs, usePRFiltering } from './hooks';
-import { PRList, PRDetail, PRFilterBar } from './components';
+import { PRList, PRDetail, PRFilterBar, CreatePullRequestDialog } from './components';
 import { Button } from '../ui/button';
 import { ResizablePanels } from '../ui/resizable-panels';
 
@@ -53,6 +53,7 @@ function EmptyState({ message }: { message: string }) {
 
 export function GitHubPRs({ onOpenSettings, isActive = false }: GitHubPRsProps) {
   const { t } = useTranslation('common');
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const projects = useProjectStore((state) => state.projects);
   const selectedProjectId = useProjectStore((state) => state.selectedProjectId);
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
@@ -187,14 +188,24 @@ export function GitHubPRs({ onOpenSettings, isActive = false }: GitHubPRsProps) 
             {prs.length} {t('prReview.open')}
           </span>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={refresh}
-          disabled={isLoading}
-        >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCreateDialogOpen(true)}
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            {t('prCreate.createPR')}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={refresh}
+            disabled={isLoading}
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          </Button>
+        </div>
       </div>
 
       {/* Content - Resizable split panels */}
@@ -249,6 +260,19 @@ export function GitHubPRs({ onOpenSettings, isActive = false }: GitHubPRsProps) 
           )
         }
       />
+
+      {/* Create PR Dialog */}
+      {selectedProjectId && (
+        <CreatePullRequestDialog
+          open={createDialogOpen}
+          onOpenChange={setCreateDialogOpen}
+          projectId={selectedProjectId}
+          onSuccess={async (prNumber) => {
+            await refresh();
+            selectPR(prNumber);
+          }}
+        />
+      )}
     </div>
   );
 }
