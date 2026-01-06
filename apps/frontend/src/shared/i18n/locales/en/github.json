@@ -1,0 +1,60 @@
+{
+  "title": "GitHub Issues",
+  "states": {
+    "opened": "Open",
+    "closed": "Closed"
+  },
+  "header": {
+    "open": "open",
+    "searchPlaceholder": "Search issues..."
+  },
+  "filters": {
+    "opened": "Open",
+    "closed": "Closed",
+    "all": "All"
+  },
+  "empty": {
+    "noMatch": "No issues match your search",
+    "selectIssue": "Select an issue to view details"
+  },
+  "notConnected": {
+    "title": "GitHub Not Connected",
+    "description": "Configure your GitHub token and repository in project settings to sync issues.",
+    "openSettings": "Open Settings"
+  },
+  "detail": {
+    "viewTask": "View Task",
+    "createTask": "Create Task",
+    "taskLinked": "Task Linked",
+    "taskId": "Task ID",
+    "description": "Description",
+    "noDescription": "No description provided.",
+    "assignees": "Assignees",
+    "milestone": "Milestone",
+    "comments": "comments"
+  },
+  "settings": {
+    "enableIssues": "Enable GitHub Issues",
+    "enableIssuesDescription": "Sync issues from GitHub and create tasks automatically",
+    "authentication": "GitHub Authentication",
+    "personalAccessToken": "Personal Access Token",
+    "tokenScope": "Create a token with",
+    "scopeRepo": "repo",
+    "scopeFrom": "scope from",
+    "githubSettings": "GitHub Settings",
+    "repository": "Repository",
+    "repositoryFormat": "Format:",
+    "repositoryFormatExample": "(e.g., owner/repo)",
+    "connectionStatus": "Connection Status",
+    "checking": "Checking...",
+    "connectedTo": "Connected to",
+    "notConnected": "Not connected",
+    "issuesAvailable": "Issues Available",
+    "issuesAvailableDescription": "Access GitHub Issues from the sidebar to view, investigate, and create tasks from issues.",
+    "defaultBranch": "Default Branch",
+    "defaultBranchDescription": "Base branch for creating task worktrees",
+    "autoDetect": "Auto-detect (main/master)",
+    "autoSyncOnLoad": "Auto-Sync on Load",
+    "autoSyncDescription": "Automatically fetch issues when the project loads"
+  }
+}
